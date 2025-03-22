@@ -1,32 +1,21 @@
+"use client";
+
+import { useChordPairsStore } from "@/entities/chord-pairs/lib/useChordPairsStore";
 import { useCreateQueryString } from "@/shared/lib/useCreateQueryString";
 import { useDebounce } from "@/shared/lib/useDebounce";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { DEFAULT_BEAT } from "../config/constants";
+import { useCallback, useEffect, useRef } from "react";
+import BeatSlider from "./BeatSlider";
 
-export interface UseBeatReturnType {
-  /**
-   * Current beat
-   */
-  beat: number;
-  /**
-   * Set the beat
-   */
-  setBeat: (value: number) => void;
-  /**
-   * Handle the beat change
-   */
-  handleBeatChange: (value: number) => void;
-}
-
-export function useBeat(): UseBeatReturnType {
+export default function BeatSliderClientWrapper() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const createQueryString = useCreateQueryString();
   const initialBeat = Number(searchParams?.get("beat"));
 
-  const [beat, setBeat] = useState(initialBeat || DEFAULT_BEAT);
+  const beat = useChordPairsStore((state) => state.beat);
+  const setBeat = useChordPairsStore((state) => state.setBeat);
 
   const setBeatQueryCallback = useCallback(
     (value: number) => {
@@ -45,11 +34,16 @@ export function useBeat(): UseBeatReturnType {
     [setBeat, setBeatQuery]
   );
 
+  const isInitialBeatSet = useRef(false);
+
   useEffect(() => {
-    if (!initialBeat) {
-      handleBeatChange(DEFAULT_BEAT);
+    if (initialBeat && !isInitialBeatSet.current) {
+      handleBeatChange(initialBeat);
+      isInitialBeatSet.current = true;
     }
   }, [initialBeat, handleBeatChange]);
 
-  return { beat, setBeat, handleBeatChange };
+  return (
+    <BeatSlider value={beat} onChange={handleBeatChange} min={40} max={220} />
+  );
 }

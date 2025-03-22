@@ -11,10 +11,13 @@ export default function BeatSlider({
   min: number;
   max: number;
 }) {
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    onChange(value);
-  }, [onChange]);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = parseInt(e.target.value);
+      onChange(value);
+    },
+    [onChange]
+  );
 
   return (
     <div className="mb-4">

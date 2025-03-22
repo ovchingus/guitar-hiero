@@ -1,14 +1,10 @@
 "use client";
 
-import { useChordPairsContext } from "@/features/chord-pairs/lib/ChordPairsContext";
+import { useChordPairsStore } from "@/entities/chord-pairs/lib/useChordPairsStore";
 import ChordDisplay from "./ChordDisplay";
 
 export default function ChordDisplayClientWrapper() {
-  const { currentChord } = useChordPairsContext();
+  const currentChord = useChordPairsStore((state) => state.currentChord);
 
-  return (
-    <div>
-      <ChordDisplay currentChord={currentChord} />
-    </div>
-  );
+  return <ChordDisplay currentChord={currentChord} />;
 }

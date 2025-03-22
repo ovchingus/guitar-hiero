@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseMetronomeProps {
   /**
@@ -28,11 +28,12 @@ export interface UseMetronomeReturnType {
    * Whether the metronome is playing
    */
   isPlaying: boolean;
-  /**
-   * Current beat count
-   */
-  currentBeat: number;
 }
+
+// Calculate interval in milliseconds from BPM
+const getIntervalFromSpeed = (bpm: number) => {
+  return 60000 / bpm;
+};
 
 export function useMetronome({
   beat = 60,
@@ -42,15 +43,12 @@ export function useMetronome({
   const [isPlaying, setIsPlaying] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
-  const beatCountRef = useRef<number>(0);
+  const beatsCountRef = useRef<number>(0);
 
-  // Calculate interval in milliseconds from BPM
-  const getIntervalFromSpeed = (bpm: number) => {
-    return 60000 / bpm;
-  };
+  // TODO: Use audio context from useAudioContext
 
   // Create and play a sound
-  const playSound = () => {
+  const playSound = useCallback(() => {
     if (!audioContextRef.current) {
       try {
         audioContextRef.current = new AudioContext();
@@ -105,17 +103,17 @@ export function useMetronome({
       oscillator.stop(context.currentTime + 0.2);
     }
 
-    beatCountRef.current += 1;
+    beatsCountRef.current += 1;
     if (onBeat) {
-      onBeat(beatCountRef.current);
+      onBeat(beatsCountRef.current);
     }
-  };
+  }, [beatStyle, onBeat]);
 
-  const start = () => {
+  const start = useCallback(() => {
     if (isPlaying) return;
 
     setIsPlaying(true);
-    beatCountRef.current = 0;
+    beatsCountRef.current = 0;
 
     // Play immediately on start
     playSound();
@@ -123,9 +121,9 @@ export function useMetronome({
     // Set up interval for subsequent beats
     const interval = getIntervalFromSpeed(beat);
     intervalIdRef.current = setInterval(playSound, interval);
-  };
+  }, [beat, isPlaying, playSound]);
 
-  const stop = () => {
+  const stop = useCallback(() => {
     if (!isPlaying) return;
 
     setIsPlaying(false);
@@ -134,32 +132,27 @@ export function useMetronome({
       clearInterval(intervalIdRef.current);
       intervalIdRef.current = null;
     }
-  };
+  }, [isPlaying]);
 
-  // TODO: Update interval when speed changes
-  // useEffect(() => {
-  //   if (isPlaying) {
-  //     stop();
-  //     start();
-  //   }
-  // }, [beat, beatStyle]);
+  // Update interval when playSound changes (which includes onBeat updates)
+  useEffect(() => {
+    if (isPlaying && intervalIdRef.current) {
+      clearInterval(intervalIdRef.current);
+      const interval = getIntervalFromSpeed(beat);
+      intervalIdRef.current = setInterval(playSound, interval);
+    }
+  }, [playSound, beat, isPlaying]);
 
   // Clean up on unmount
   useEffect(() => {
-    return () => {
-      if (intervalIdRef.current) {
-        clearInterval(intervalIdRef.current);
-      }
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
-    };
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+    }
   }, []);
 
   return {
     start,
     stop,
     isPlaying,
-    currentBeat: beatCountRef.current,
   };
 }

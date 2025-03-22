@@ -1,5 +1,5 @@
+import { BeatStyleType } from "@/entities/chord-pairs/config/types";
 import RadioButtons from "@/shared/ui/RadioButtons";
-import { BeatStyleType } from "@/features/chord-pairs/config/types";
 
 const OPTIONS: { value: BeatStyleType; label: string; disabled?: boolean }[] = [
   { value: "metronome", label: "Metronome" },

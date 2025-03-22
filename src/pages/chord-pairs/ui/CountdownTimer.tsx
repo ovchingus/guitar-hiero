@@ -1,10 +1,4 @@
-"use client";
-
-const formatTime = (time: number) => {
-  const minutes = Math.floor(time / 60);
-  const seconds = time % 60;
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-};
+import { formatTime } from "../lib/formatTime";
 
 export default function CountdownTimer({ time }: { time: number }) {
   return (
