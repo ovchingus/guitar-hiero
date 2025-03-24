@@ -2,9 +2,9 @@
 
 App to learn how to play guitar.
 
-    The name Guitar Hiero is a fusion of music and mysticism, drawing inspiration from the Hierophant tarot card, which symbolizes wisdom, guidance, and structured learning. In tarot, the card is a teacher and mentor, helping seekers unlock deeper knowledge.
+>The name Guitar Hiero is a fusion of music and mysticism, drawing inspiration from the Hierophant tarot card, which symbolizes wisdom, guidance, and structured learning. In tarot, the card is a teacher and mentor, helping seekers unlock deeper knowledge.
 
-    The word "Hiero" (short for Hierophant) also evokes hieroglyphs and ancient wisdom, connecting to the idea that music is a universal language, passed down through generations.
+>The word "Hiero" (short for Hierophant) also evokes hieroglyphs and ancient wisdom, connecting to the idea that music is a universal language, passed down through generations.
 
 That's a description made by ai ^_^
 
