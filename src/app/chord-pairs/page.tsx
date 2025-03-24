@@ -1,1 +1,1 @@
-export { default } from "@/pages/chord-pairs/ui/Page";
+export { ChordPairsPage as default } from "@/pagez/chord-pairs";

@@ -1,10 +1,10 @@
 "use client";
 
-import { useChordPairsStore } from "@/entities/chord-pairs/lib/useChordPairsStore";
+import { useChordPairsStore } from "@/entities/chord-pairs";
 import { useTimer } from "../lib/useTimer";
-import CountdownTimer from "./CountdownTimer";
+import { CountdownTimer } from "./CountdownTimer";
 
-export default function CountdownTimerClientWrapper() {
+export function CountdownTimerClientWrapper() {
   const isStarted = useChordPairsStore((state) => state.isStarted);
   const setIsStarted = useChordPairsStore((state) => state.setIsStarted);
 

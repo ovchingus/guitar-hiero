@@ -1,9 +1,7 @@
-import { CHORDS } from "@/entities/chord/config/constants";
-import { Chord } from "@/entities/chord/config/types";
-import { BeatStyleType } from "@/entities/chord-pairs/config/types";
+import { CHORDS, Chord } from "@/entities/chord";
+import { BeatStyleType } from "@/entities/chord-pairs";
 import { create } from "zustand";
-import { DEFAULT_BEAT_STYLE } from "../config/constants";
-import { DEFAULT_BEAT } from "../config/constants";
+import { DEFAULT_BEAT_STYLE, DEFAULT_BPM } from "../config/constants";
 
 interface ChordPairsStore {
   /**
@@ -25,11 +23,11 @@ interface ChordPairsStore {
   /**
    * The beat speed
    */
-  beat: number;
+  bpm: number;
   /**
    * Set the beat speed
    */
-  setBeat: (beat: number) => void;
+  setBpm: (beat: number) => void;
   /**
    * The beat style
    */
@@ -45,8 +43,8 @@ export const useChordPairsStore = create<ChordPairsStore>((set) => ({
   setIsStarted: (isStarted: boolean) => set({ isStarted }),
   currentChord: CHORDS[0],
   setCurrentChord: (currentChord: Chord) => set({ currentChord }),
-  beat: DEFAULT_BEAT,
-  setBeat: (beat: number) => set({ beat }),
+  bpm: DEFAULT_BPM,
+  setBpm: (beat: number) => set({ bpm: beat }),
   beatStyle: DEFAULT_BEAT_STYLE,
   setBeatStyle: (beatStyle: BeatStyleType) => set({ beatStyle }),
 }));

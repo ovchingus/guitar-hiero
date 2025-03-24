@@ -1,0 +1,1 @@
+export const METRONOME_STEPS = 4;

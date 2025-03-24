@@ -1,1 +1,1 @@
-export { default } from '@/pages/home/ui/Layout' 
+export { Layout as default } from "@/pagez/home";
