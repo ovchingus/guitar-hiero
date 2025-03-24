@@ -33,5 +33,3 @@ Check out the lesson [here](https://youtu.be/TCLdFIqCp7s?si=QAieH1fnJtr42jks).
 
 - [FSD](https://feature-sliced.github.io/documentation/)
   A great way to structure the code.
-
-// commit
