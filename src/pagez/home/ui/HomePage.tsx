@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function HomePage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-full px-4 py-8">
@@ -62,12 +64,12 @@ export function HomePage() {
       </div>
 
       <div className="mt-8 md:mt-10">
-        <a
+        <Link
           href="/chord-pairs"
           className="bg-foreground text-background px-4 md:px-6 py-2 md:py-3 rounded-md font-medium hover:opacity-90 transition-opacity text-sm md:text-base"
         >
           Get Started
-        </a>
+        </Link>
       </div>
 
       <div className="mt-6 md:mt-8 text-xs md:text-sm text-gray-500 dark:text-gray-400">

@@ -1,5 +1,5 @@
 import { Chord } from "@/entities/chord";
-import Image from "next/image";
+import { Image } from "@/shared/ui/Image";
 
 export default function ChordDisplay({
   currentChord,
