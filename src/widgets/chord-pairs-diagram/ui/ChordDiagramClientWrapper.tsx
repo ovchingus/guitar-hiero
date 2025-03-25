@@ -11,13 +11,14 @@ export function ChordDiagramClientWrapper() {
   const currentChord = useChordPairsStore((state) => state.currentChord);
   const setCurrentChord = useChordPairsStore((state) => state.setCurrentChord);
   const beatNumber = useMetronomeStore((state) => state.beatNumber);
+  const noteLength = useChordPairsStore((state) => state.noteLength);
 
   useEffect(() => {
     if (beatNumber === 0) {
       return;
     }
 
-    if (beatNumber % METRONOME_STEPS === 0) {
+    if (beatNumber % (METRONOME_STEPS / noteLength) === 0) {
       const availableChords = CHORDS.filter(
         (chord) => chord.name !== currentChord.name
       );

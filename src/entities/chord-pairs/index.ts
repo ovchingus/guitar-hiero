@@ -1,4 +1,5 @@
 export { useChordPairsStore } from "./lib/useChordPairsStore";
+export type { NoteLengthType } from "./lib/useChordPairsStore";
 export {
   DEFAULT_BPM,
   DEFAULT_BEAT_STYLE,
