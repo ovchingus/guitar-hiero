@@ -1,11 +1,20 @@
 import { create } from "zustand";
 
+export type BeatsPerMeasureType = 2 | 3 | 4 | 6;
+
 interface MetronomeStore {
-  beatNumber: number;
-  setBeatNumber: (beatNumber: number) => void;
+  playedNotesCount: number;
+  setPlayedNotesCount: (playedNotesCount: number) => void;
+  incrementPlayedNotesCount: () => void;
+  beatsPerMeasure: BeatsPerMeasureType;
+  setBeatsPerMeasure: (beatsPerMeasure: BeatsPerMeasureType) => void;
 }
 
 export const useMetronomeStore = create<MetronomeStore>((set) => ({
-  beatNumber: 0,
-  setBeatNumber: (beatNumber: number) => set({ beatNumber }),
+  playedNotesCount: -1,
+  setPlayedNotesCount: (playedNotesCount: number) => set({ playedNotesCount }),
+  incrementPlayedNotesCount: () =>
+    set((state) => ({ playedNotesCount: state.playedNotesCount + 1 })),
+  beatsPerMeasure: 4,
+  setBeatsPerMeasure: (beatsPerMeasure: BeatsPerMeasureType) => set({ beatsPerMeasure }),
 }));

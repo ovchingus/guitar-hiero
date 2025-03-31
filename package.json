@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:serve": "node serve.ts"
   },
   "dependencies": {
     "classnames": "^2.5.1",
@@ -22,8 +23,11 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/serve-handler": "^6.1.4",
     "eslint": "^9",
     "eslint-config-next": "15.2.2",
+    "http": "^0.0.1-security",
+    "serve-handler": "^6.1.6",
     "tailwindcss": "^4.0.14",
     "typescript": "^5"
   }

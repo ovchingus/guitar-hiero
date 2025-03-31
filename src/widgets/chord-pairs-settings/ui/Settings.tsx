@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 import { BeatSliderClientWrapper } from "./BeatSliderClientWrapper";
-import { BeatStyleClientWrapper } from "./BeatStyleClientWrapper";
+// import { BeatStyleClientWrapper } from "./BeatStyleClientWrapper";
 import { NoteLengthClientWrapper } from "./NoteLengthClientWrapper";
+import { BeatsPerMeasureClientWrapper } from "./BeatsPerMeasureClientWrapper";
 
 export function Settings() {
   return (
@@ -11,14 +12,17 @@ export function Settings() {
         <BeatSliderClientWrapper />
       </Suspense>
 
-      <div className="text-lg font-bold">Beat Style</div>
+      {/* <div className="text-lg font-bold">Beat Style</div>
       <Suspense>
         <BeatStyleClientWrapper />
-      </Suspense>
+      </Suspense> */}
 
-      <div className="text-lg font-bold">Note Length</div>
+      <div className="text-lg font-bold">Notes</div>
       <Suspense>
         <NoteLengthClientWrapper />
+      </Suspense>
+      <Suspense>
+        <BeatsPerMeasureClientWrapper />
       </Suspense>
     </div>
   );

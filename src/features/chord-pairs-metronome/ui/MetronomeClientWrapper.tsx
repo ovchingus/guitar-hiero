@@ -1,18 +1,23 @@
 import { useChordPairsStore } from "@/entities/chord-pairs";
 import { useEffect } from "react";
 import { useMetronome } from "../lib/useMetronome";
-import { useMetronomeStore } from "../lib/useMetronomeStore";
 import { Metronome } from "./Metronome";
+import { useMetronomeStore } from "../lib/useMetronomeStore";
 
 export function MetronomeClientWrapper() {
   const isStarted = useChordPairsStore((state) => state.isStarted);
-  const beat = useChordPairsStore((state) => state.bpm);
-  const beatStyle = useChordPairsStore((state) => state.beatStyle);
-  const beatNumber = useMetronomeStore((state) => state.beatNumber);
+  const tempo = useChordPairsStore((state) => state.bpm);
+  const beatsPerMeasure = useMetronomeStore((state) => state.beatsPerMeasure);
+  const noteValue = useChordPairsStore((state) => state.noteValue);
 
-  const { start, stop, isPlaying } = useMetronome({
-    beat: beat,
-    beatStyle: beatStyle,
+  const { start, stop, isPlaying, playedNotesCount } = useMetronome({
+    tempo: tempo,
+    masterVolume: 1,
+    accentVolume: 1,
+    quarterVolume: 1,
+    eighthVolume: 0,
+    sixteenthVolume: 0,
+    tripletVolume: 0,
   });
 
   useEffect(() => {
@@ -23,5 +28,12 @@ export function MetronomeClientWrapper() {
     }
   }, [isStarted, start, stop]);
 
-  return <Metronome beatNumber={beatNumber} isPlaying={isPlaying} />;
+  return (
+    <Metronome
+      timeSignatureCount={noteValue}
+      beatsPerMeasure={beatsPerMeasure}
+      isPlaying={isPlaying}
+      playedNotesCount={playedNotesCount}
+    />
+  );
 }

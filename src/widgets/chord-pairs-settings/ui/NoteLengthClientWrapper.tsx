@@ -1,9 +1,9 @@
 "use client";
 
-import { NoteLengthType, useChordPairsStore } from "@/entities/chord-pairs";
+import { NoteValueType, useChordPairsStore } from "@/entities/chord-pairs";
 import Select from "@/shared/ui/Select";
 
-const NOTE_LENGTH_OPTIONS = [1, 2, 4, 8, 16] as NoteLengthType[];
+const NOTE_LENGTH_OPTIONS = [1, 2, 4, 8, 16] as NoteValueType[];
 
 const LABEL_MAP = {
   1: "Whole Note",
@@ -14,8 +14,8 @@ const LABEL_MAP = {
 };
 
 export function NoteLengthClientWrapper() {
-  const noteLength = useChordPairsStore((state) => state.noteLength);
-  const setNoteLength = useChordPairsStore((state) => state.setNoteLength);
+  const noteLength = useChordPairsStore((state) => state.noteValue);
+  const setNoteLength = useChordPairsStore((state) => state.setNoteValue);
 
   const options = NOTE_LENGTH_OPTIONS.map((option) => ({
     value: option,
@@ -24,9 +24,10 @@ export function NoteLengthClientWrapper() {
 
   return (
     <Select
+      label="Change chord every"
       options={options}
       value={noteLength}
-      onChange={(value) => setNoteLength(value as NoteLengthType)}
+      onChange={(value) => setNoteLength(value as NoteValueType)}
     />
   );
 }

@@ -1,5 +1,5 @@
-import { BeatStyleType } from "@/entities/chord-pairs";
-import { useAudioContext } from "@/shared/lib/useAudioContext";
+import { useChordPairsStore } from "@/entities/chord-pairs";
+import { Metronome } from "@/entities/metronome";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMetronomeStore } from "./useMetronomeStore";
 
@@ -7,15 +7,20 @@ interface UseMetronomeProps {
   /**
    * Beats per minute
    */
-  beat?: number;
+  tempo?: number;
   /**
-   * Style of the metronome
+   * Number of beats per measure
    */
-  beatStyle?: BeatStyleType;
+  meter?: number;
   /**
-   * Callback with current beat count
+   * Volume settings
    */
-  onBeat?: (beatCount: number) => void;
+  masterVolume?: number;
+  accentVolume?: number;
+  quarterVolume?: number;
+  eighthVolume?: number;
+  sixteenthVolume?: number;
+  tripletVolume?: number;
 }
 
 export interface UseMetronomeReturnType {
@@ -31,107 +36,101 @@ export interface UseMetronomeReturnType {
    * Whether the metronome is playing
    */
   isPlaying: boolean;
+  /**
+   * The number of notes played
+   */
+  playedNotesCount: number;
 }
 
-// Calculate interval in milliseconds from BPM
-const getIntervalFromSpeed = (bpm: number) => {
-  return 60_000 / bpm;
-};
-
 export function useMetronome({
-  beat = 60,
-  beatStyle = "metronome",
-  onBeat,
+  tempo = 120,
+  meter = 4,
+  masterVolume = 0.5,
+  accentVolume = 1,
+  quarterVolume = 0.75,
+  eighthVolume = 0,
+  sixteenthVolume = 0,
+  tripletVolume = 0,
 }: UseMetronomeProps = {}): UseMetronomeReturnType {
   const [isPlaying, setIsPlaying] = useState(false);
-  const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
-  const audioContext = useAudioContext();
+  const metronomeRef = useRef<Metronome | null>(null);
+  const {
+    playedNotesCount,
+    setPlayedNotesCount,
+    incrementPlayedNotesCount,
+    beatsPerMeasure,
+  } = useMetronomeStore();
+  const noteValue = useChordPairsStore((state) => state.noteValue);
 
-  const setBeatNumber = useMetronomeStore((state) => state.setBeatNumber);
-  const beatNumber = useMetronomeStore((state) => state.beatNumber);
+  console.log(playedNotesCount)
+  useEffect(() => {
+    metronomeRef.current = new Metronome({
+      tempo,
+      meter: beatsPerMeasure,
+      masterVolume,
+      accentVolume,
+      quarterVolume,
+      eighthVolume,
+      sixteenthVolume,
+      tripletVolume,
+      onPlayedNote: ({
+        isWholeNote,
+        isHalfNote,
+        isQuarterNote,
+        isEighthNote,
+        isSixteenthNote,
+      }) => {
+        if (noteValue === 1 && isWholeNote) {
+          incrementPlayedNotesCount();
+        }
 
-  const playSoundOnce = useCallback(() => {
-    const context = audioContext;
+        if (noteValue === 2 && isHalfNote) {
+          incrementPlayedNotesCount();
+        }
 
-    if (!context) {
-      console.error("AudioContext not supported in this browser");
-      return;
-    }
+        if (noteValue === 4 && isQuarterNote) {
+          incrementPlayedNotesCount();
+        }
 
-    const oscillator = context.createOscillator();
-    const gainNode = context.createGain();
+        if (noteValue === 8 && isEighthNote) {
+          incrementPlayedNotesCount();
+        }
 
-    oscillator.connect(gainNode);
-    gainNode.connect(context.destination);
+        if (noteValue === 16 && isSixteenthNote) {
+          incrementPlayedNotesCount();
+        }
+      },
+    });
 
-    if (beatStyle === "metronome") {
-      oscillator.type = "sine";
-      // TODO: Get better metronome sound
-      oscillator.frequency.value = 880; // A5 note
-      gainNode.gain.value = 0.5;
-
-      oscillator.start();
-      oscillator.stop(context.currentTime + 0.1);
-    } else if (beatStyle === "drums") {
-      oscillator.type = "triangle";
-      oscillator.frequency.value = 150;
-      gainNode.gain.value = 0.8;
-
-      // TODO: Get real drums sound
-      gainNode.gain.setValueAtTime(0.8, context.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(
-        0.001,
-        context.currentTime + 0.2
-      );
-
-      oscillator.start();
-      oscillator.stop(context.currentTime + 0.2);
-    }
-
-    setBeatNumber(beatNumber + 1);
-
-    if (onBeat) {
-      onBeat(beatNumber + 1);
-    }
-  }, [audioContext, beatNumber, beatStyle, onBeat, setBeatNumber]);
+    return () => {
+      metronomeRef.current?.dispose();
+    };
+  }, [
+    tempo,
+    meter,
+    masterVolume,
+    accentVolume,
+    quarterVolume,
+    eighthVolume,
+    sixteenthVolume,
+    tripletVolume,
+    incrementPlayedNotesCount,
+    beatsPerMeasure,
+    noteValue,
+  ]);
 
   const start = useCallback(() => {
     if (isPlaying) return;
-
     setIsPlaying(true);
-    setBeatNumber(0);
-
-    // Play immediately on start
-    playSoundOnce();
-
-    // Set up interval for subsequent beats
-    const interval = getIntervalFromSpeed(beat);
-    intervalIdRef.current = setInterval(playSoundOnce, interval);
-  }, [beat, isPlaying, playSoundOnce, setBeatNumber]);
+    metronomeRef.current?.start();
+  }, [isPlaying]);
 
   const stop = useCallback(() => {
     if (!isPlaying) return;
-
     setIsPlaying(false);
-    setBeatNumber(0);
+    setPlayedNotesCount(-1);
+    metronomeRef.current?.stop();
+  }, [isPlaying, setPlayedNotesCount]);
 
-    if (intervalIdRef.current) {
-      clearInterval(intervalIdRef.current);
-      intervalIdRef.current = null;
-    }
-  }, [isPlaying, setBeatNumber]);
-
-  // Update interval when playSound changes (which includes onBeat updates)
-  // This is a hack to ensure onBeat function updates inside playSound
-  // Otherwise, onBeat function will be enclosed with initial state
-  // TODO: Find a better solution
-  useEffect(() => {
-    if (isPlaying && intervalIdRef.current) {
-      clearInterval(intervalIdRef.current);
-      const interval = getIntervalFromSpeed(beat);
-      intervalIdRef.current = setInterval(playSoundOnce, interval);
-    }
-  }, [playSoundOnce, beat, isPlaying]);
-
-  return { start, stop, isPlaying };
+  return { start, stop, isPlaying, playedNotesCount };
 }

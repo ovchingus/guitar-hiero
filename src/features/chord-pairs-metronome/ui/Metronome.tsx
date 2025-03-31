@@ -1,40 +1,45 @@
-import { METRONOME_STEPS } from "../config/constants";
+import { BeatsPerMeasureType } from "../lib/useMetronomeStore";
 
 export function Metronome({
-  beatNumber,
   isPlaying,
+  playedNotesCount,
+  beatsPerMeasure,
+  timeSignatureCount,
 }: {
-  beatNumber: number;
   isPlaying: boolean;
+  playedNotesCount: number;
+  beatsPerMeasure: BeatsPerMeasureType;
+  timeSignatureCount: number;
 }) {
-  const currentBeatIndex = beatNumber % METRONOME_STEPS;
+  const currentBeatIndex = playedNotesCount % beatsPerMeasure;
+  console.log(timeSignatureCount, beatsPerMeasure);
 
-  const getBeatIconClassName = (beatIconIndex: number) => {
-    const isCurrentBeat = currentBeatIndex === beatIconIndex;
+  const getBeatIconClassName = (beatIndex: number) => {
+    const isCurrentBeat = currentBeatIndex === beatIndex;
 
     if (isCurrentBeat && isPlaying) {
-      return "bg-blue-500";
+      return `bg-blue-500`;
     }
 
     if (isCurrentBeat && !isPlaying) {
-      return "bg-gray-500";
+      return `bg-gray-500`;
     }
 
-    return "bg-transparent";
+    return `bg-transparent`;
   };
 
+  const beatsArray = Array.from({ length: 16 });
+
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="flex gap-2">
-        {Array.from({ length: METRONOME_STEPS }).map((_, beatIconIndex) => (
-          <div
-            key={beatIconIndex}
-            className={`w-4 h-4 rounded-full border-2 border-gray-400 ${getBeatIconClassName(
-              beatIconIndex
-            )}`}
-          />
-        ))}
-      </div>
+    <div className="flex flex-wrap gap-2">
+      {beatsArray.map((_, beatIndex) => (
+        <div
+          key={beatIndex}
+          className={`w-4 h-4 rounded-full border-2 border-gray-400 ${getBeatIconClassName(
+            beatIndex
+          )}`}
+        />
+      ))}
     </div>
   );
 }
